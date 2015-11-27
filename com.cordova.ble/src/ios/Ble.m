@@ -31,6 +31,12 @@
 #pragma mark - Coupan View
 - (void)getContent:(CDVInvokedUrlCommand *)command{
     self.coupons = [[OnyxBeacon sharedInstance] getContent];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsArray: self.coupons];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)didRangeBeacons:(NSArray *)beacons inRegion:(OBBeaconRegion *)region {
