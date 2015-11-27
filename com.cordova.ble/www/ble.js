@@ -111,6 +111,92 @@ Ble.requestWhenInUseAuthorization = function (success, fail) {
     exec(success, fail, 'Ble', 'requestWhenInUseAuthorization', []);
 };
 
+/**
+ * initSDK
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.initSDK = function (success, fail) {
+    exec(success, fail, 'Ble', 'initSDK', []);
+};
+
+/**
+ * isBluetoothAvailable
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.isBluetoothAvailable = function (success, fail) {
+    exec(success, fail, 'Ble', 'isBluetoothAvailable', []);
+};
+
+/**
+ * startScan
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.startScan = function (success, fail) {
+    exec(success, fail, 'Ble', 'startScan', []);
+};
+
+/**
+ * stopScan
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.stopScan = function (success, fail) {
+    exec(success, fail, 'Ble', 'stopScan', []);
+};
+
+/**
+ * setBackgroundBetweenScanPeriod
+ * @param {int} period
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setBackgroundBetweenScanPeriod = function (period, success, fail) {
+    exec(success, fail, 'Ble', 'setBackgroundBetweenScanPeriod', [period]);
+};
+
+/**
+ * setForegroundMode
+ * @param {Boolean} is
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setForegroundMode = function (is, success, fail) {
+    exec(success, fail, 'Ble', 'setForegroundMode', [is]);
+};
+
+/**
+ * setCouponEnabled
+ * @param {Boolean} is
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setCouponEnabled = function (is, success, fail) {
+    exec(success, fail, 'Ble', 'setCouponEnabled', [is]);
+};
+
+/**
+ * enableGeofencing
+ * @param {Boolean} is
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.enableGeofencing = function (is, success, fail) {
+    exec(success, fail, 'Ble', 'enableGeofencing', [is]);
+};
+
+/**
+ * setAPIContentEnabled
+ * @param {Boolean} is
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setAPIContentEnabled = function (is, success, fail) {
+    exec(success, fail, 'Ble', 'setAPIContentEnabled', [is]);
+};
+
 Ble.onyxBeaconError = function (msg) {
     Console.log(msg);
 }
