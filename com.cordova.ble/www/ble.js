@@ -4,6 +4,14 @@ exec = require('cordova/exec');
 
 var Ble = function () {
 };
+
+var Tag = function (id, name, status){
+
+    this.id = id || "";
+    this.name = name || "";
+    this.status = status || "";
+}
+
 var currentCallback=null;
 
 
@@ -186,6 +194,15 @@ Ble.setCouponEnabled = function (is, success, fail) {
 Ble.enableGeofencing = function (is, success, fail) {
     exec(success, fail, 'Ble', 'enableGeofencing', [is]);
 };
+/**
+ * setLocationTrackingEnabled
+ * @param {Boolean} is
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setLocationTrackingEnabled = function (is, success, fail) {
+    exec(success, fail, 'Ble', 'setLocationTrackingEnabled', [is]);
+};
 
 /**
  * setAPIContentEnabled
@@ -197,6 +214,149 @@ Ble.setAPIContentEnabled = function (is, success, fail) {
     exec(success, fail, 'Ble', 'setAPIContentEnabled', [is]);
 };
 
+
+/**
+ * enableBluetooth
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.enableBluetooth = function (success, fail) {
+    exec(success, fail, 'Ble', 'enableBluetooth', []);
+};
+
+
+/**
+ * getTags
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.getTags = function (success, fail) {
+    exec(success, fail, 'Ble', 'getTags', []);
+};
+
+
+/**
+ * restartLocationTracking
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.restartLocationTracking = function (success, fail) {
+    exec(success, fail, 'Ble', 'restartLocationTracking', []);
+};
+
+/**
+ * logOut
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.logOut = function (success, fail) {
+    exec(success, fail, 'Ble', 'logOut', []);
+};
+
+/**
+ * sendGenericUserProfile
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.sendGenericUserProfile = function (profile,success, fail) {
+    exec(success, fail, 'Ble', 'sendGenericUserProfile', [profile]);
+};
+
+/**
+ * isInForeground
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.isInForeground = function (success, fail) {
+    exec(success, fail, 'Ble', 'isInForeground', []);
+};
+
+
+/**
+ * isCouponEnabled
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.isCouponEnabled = function (success, fail) {
+    exec(success, fail, 'Ble', 'isCouponEnabled', []);
+};
+
+/**
+ * isAPIEnabled
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.isAPIEnabled = function (success, fail) {
+    exec(success, fail, 'Ble', 'isAPIEnabled', []);
+};
+
+/**
+ * deleteCoupon
+ * @param {Function} var1
+ * @param {Function} var2
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.deleteCoupon = function (var1,var2,success, fail) {
+    exec(success, fail, 'Ble', 'deleteCoupon', [var1,var2]);
+};
+
+/**
+ * sendDeviceToken
+ * @param {Function} var1
+ * @param {Function} var2
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.sendDeviceToken = function (var1,var2,success, fail) {
+    exec(success, fail, 'Ble', 'sendDeviceToken', [var1,var2]);
+};
+
+/**
+ * setAuthExtraData
+ * @param {Function} var1
+ * @param {Function} var2
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setAuthExtraData = function (var1,success, fail) {
+    exec(success, fail, 'Ble', 'setAuthExtraData', [var1]);
+};
+
+/**
+ * setAuthExtraData
+ * @param {Function} var1, this is JSONARRAY of Tag [[id,name,state],[id,name,state],[id,name,state]]
+ * @param {Function} var2
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setTagsFilterForCoupons = function (tagArrayList,success, fail) {
+    exec(success, fail, 'Ble', 'setAuthExtraData', tagArrayList]);
+};
+
+/**
+ * markAsTapped
+ * @param {Function} var1
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.markAsTapped = function (var1,success, fail) {
+    exec(success, fail, 'Ble', 'markAsTapped', [var1]);
+};
+
+/**
+ * markAsOpened
+ * @param {Function} var1
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.markAsOpened = function (var1,success, fail) {
+    exec(success, fail, 'Ble', 'markAsOpened', [var1]);
+};
+
+/**
+ * onyxBeaconError
+ */
 Ble.onyxBeaconError = function (msg) {
     Console.log(msg);
 }
