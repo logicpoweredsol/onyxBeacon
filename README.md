@@ -1,2 +1,2 @@
-# onyxBeacon
+# sensetap
 This is cordova plugin
