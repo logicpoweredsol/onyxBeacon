@@ -10,7 +10,7 @@ var Tag = function (id, name, status){
     this.id = id || "";
     this.name = name || "";
     this.status = status || "";
-}
+};
 
 var OBContent = function (title,uuid,message,path,action,createTime,contentState,contentType){
     
@@ -25,7 +25,7 @@ var OBContent = function (title,uuid,message,path,action,createTime,contentState
     this.contentType = contentType || "";
     
     
-}
+};
 
 
 
@@ -568,11 +568,47 @@ Ble.didRequestInfo = function (ob_content,viewcontroller) {
 
 /**
  * @Platform iOS
+ * onTagsReceived
+ */
+Ble.onTagsReceived = function (tags) {
+    
+};
+
+
+/**
+ * @Platform iOS
+ * onCouponsReceived
+ */
+Ble.onCouponsReceived = function (coupan, beacons) {
+    
+};
+
+
+
+/**
+ * @Platform iOS
+ * onCouponsReceived
+ */
+Ble.onBluemixCredentialsReceived = function (blueMix) {
+    
+};
+
+/**
+ * @Platform iOS
+ * didRangeBeaconsInRegion
+ */
+Ble.didRangeBeaconsInRegion = function (beacons) {
+    
+};
+
+/**
+ * @Platform iOS
  * onyxBeaconError
  */
 Ble.onyxBeaconError = function (msg) {
-    Console.log(msg);
-}
+
+};
+/*
 if (cordova.platformId === 'android' || cordova.platformId === 'amazon-fireos' || cordova.platformId === 'windowsphone') {
     
     var channel = require('cordova/channel');
@@ -590,5 +626,5 @@ if (cordova.platformId === 'android' || cordova.platformId === 'amazon-fireos' |
                                      channel.initializationComplete('onBlePluginReady');
                                      });
 }
-
+*/
 module.exports = Ble;

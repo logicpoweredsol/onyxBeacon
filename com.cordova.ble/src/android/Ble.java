@@ -36,8 +36,7 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
 
         beaconManager = OnyxBeaconApplication.getOnyxBeaconManager(this);
 
-        mContentReceiver = ContentReceiver.getInstance();
-
+        mContentReceiver = ContentReceiver.getInstance(this);
         //Register for BLE events
         mBleReceiver = BleStateReceiver.getInstance();
         mBleReceiver.setBleStateListener(this);
@@ -184,12 +183,45 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
     }
 
     public void onError(int errorCode, Exception e) {
-        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, e.toString());
-        pluginResult.setKeepCallback(true);
-        if (messageChannel != null) {
-            messageChannel.sendPluginResult(pluginResult);
-        }
+        String js = String.format(
+                "window.cordova.plugins.Ble.onyxBeaconError('%d:%s');",
+                errorCode,e.getMessage());
+        webView.sendJavascript(js);
     }
+
+
+    public void onTagsReceived(String tags) {
+        String js = String.format(
+                "window.cordova.plugins.Ble.onTagsReceived('%s');",
+                tags);
+        webView.sendJavascript(js);
+    }
+
+
+
+    public void didRangeBeaconsInRegion( String  beacons) {
+        String js = String.format(
+                "window.cordova.plugins.Ble.didRangeBeaconsInRegion('%s');",
+                beacons);
+        webView.sendJavascript(js);
+    }
+
+
+
+    public void onCouponsReceived(String coupons, String  beacon) {
+        String js = String.format(
+                "window.cordova.plugins.Ble.onCouponsReceived('%s,%s');",
+                coupons,beacon);
+        webView.sendJavascript(js);
+    }
+
+    public void onBluemixCredentialsReceived( String blueMix ) {
+        String js = String.format(
+                "window.cordova.plugins.Ble.onBluemixCredentialsReceived('%s');",
+                tags);
+        webView.sendJavascript(js);
+    }
+
 
     @Override
     public void onBleStackEvent(int event) {
@@ -201,8 +233,9 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
             case 2:
                  onError(event, "Beacons with invalid RSSI detected. Please restart your bluetooth.”);
              break;
- onError(event, “This Error is unknown“)
-		default:break;
+
+		default:onError(event, "This Error is unknown");
+            break;
 
         }
     }
