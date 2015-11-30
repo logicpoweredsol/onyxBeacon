@@ -9,42 +9,65 @@
 #import "Ble.h"
 
 
-@interface Ble ()
-
-@property (strong, nonatomic) DDFileLogger* fileLogger;
-@property (nonatomic, strong) NSArray *coupons;
-@property (nonatomic, strong) OBContent *selContent;
-
-@end
 
 @implementation Ble
 
 /*
-    NSDictionary *jsonObj = [ [NSDictionary alloc]
-                             initWithObjectsAndKeys :
-                             dateStr, @"dateStr",
-                             @"true", @"success",
-                             nil
-                             ];
-*/
+ NSDictionary *jsonObj = [ [NSDictionary alloc]
+ initWithObjectsAndKeys :
+ dateStr, @"dateStr",
+ @"true", @"success",
+ nil
+ ];
+ */
 
 #pragma mark - Coupan View
+
 - (void)getContent:(CDVInvokedUrlCommand *)command{
-    self.coupons = [[OnyxBeacon sharedInstance] getContent];
+    
+    NSArray *coupons = [[OnyxBeacon sharedInstance] getContent];
     
     CDVPluginResult* pluginResult = [CDVPluginResult
                                      resultWithStatus:CDVCommandStatus_OK
-                                     messageAsArray: self.coupons];
+                                     messageAsArray: coupons];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)didRangeBeacons:(NSArray *)beacons inRegion:(OBBeaconRegion *)region {
-    NSLog(@"beacons: %@", beacons);
-}
 
 
 #pragma mark - OnyxBeaconCouponDelegate Methods
+- (void)didRangeBeacons:(NSArray *)beacons inRegion:(OBBeaconRegion *)region {
+    
+    NSString* jsString = nil;
+    jsString = [NSString stringWithFormat:@"%@(\"%@,%@\");", @"window.cordova.plugins.Ble.didRangeBeacons", beacons,region];
+    [self.commandDelegate evalJs:jsString];
+    
+}
+
+
+- (void)locationManagerDidEnterRegion:(CLRegion *)region{
+
+    NSString* jsString = nil;
+    jsString = [NSString stringWithFormat:@"%@(\"%@\");", @"window.cordova.plugins.Ble.locationManagerDidEnterRegion", region];
+    [self.commandDelegate evalJs:jsString];
+    
+}
+
+
+
+
+- (void)locationManagerDidExitRegion:(CLRegion *)region{
+    
+    NSString* jsString = nil;
+    jsString = [NSString stringWithFormat:@"%@(\"%@\");", @"window.cordova.plugins.Ble.locationManagerDidExitRegion", region];
+    [self.commandDelegate evalJs:jsString];
+    
+}
+
+
+
+
 
 - (void)didReceiveContent:(NSArray *)coupons {
     /*
@@ -58,22 +81,116 @@
      */
     //Send Coupan to Cordova
     
+    NSString* jsString = nil;
+    jsString = [NSString stringWithFormat:@"%@(\"%@\");", @"window.cordova.plugins.Ble.didReceiveContent", coupons];
+    [self.commandDelegate evalJs:jsString];
 }
 
 - (void)didRequestInfo:(OBContent *)content inViewController:(UIViewController *)viewController {
+    NSString* jsString = nil;
+    jsString = [NSString stringWithFormat:@"%@(\"%@,%@\");", @"window.cordova.plugins.Ble.didRequestInfo", content,viewController.restorationIdentifier];
+    [self.commandDelegate evalJs:jsString];
+}
+
+- (void)contentOpened:(CDVInvokedUrlCommand *)command {
+    OBContent *content = [OBContent alloc];
+
     
-}
-
-- (void)contentOpened:(OBContent *)content {
+    
     [[OnyxBeacon sharedInstance] contentOpened:content];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"contentOpened Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)contentTapped:(OBContent *)content {
-    [[OnyxBeacon sharedInstance] contentTapped:self.selContent];
+- (void)getTags:(CDVInvokedUrlCommand *)command {
+    NSArray * result  = [[OnyxBeacon sharedInstance] getTags];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsArray:result];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)deleteContent:(OBContent *)content {
+
+- (void)getSelectedTags:(CDVInvokedUrlCommand *)command {
+    NSArray * result  = [[[OnyxBeacon sharedInstance] getSelectedTags] allObjects];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsArray:result];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)clearCoupons:(CDVInvokedUrlCommand *)command {
+    [[OnyxBeacon sharedInstance] clearCoupons];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"clearCoupons Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+
+- (void)setTags:(CDVInvokedUrlCommand *)command {
+    
+    NSSet *set = [[NSSet alloc] init];
+    [set setByAddingObjectsFromArray:command.arguments];
+    [[OnyxBeacon sharedInstance] setTags:set];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"setTags Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+- (void)contentTapped:(CDVInvokedUrlCommand *)command {
+    OBContent *content = [OBContent alloc];
+    [[OnyxBeacon sharedInstance] contentTapped:content];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"contentTapped Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)showContentInfo:(CDVInvokedUrlCommand *)command {
+    OBContent *content = [OBContent alloc];
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIViewController *rootViewController = window.rootViewController;
+
+    [[OnyxBeacon sharedInstance] showContentInfo:content inViewController:rootViewController ];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"showContentInfo Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+- (void)viewControllerForContent:(CDVInvokedUrlCommand *)command {
+    OBContent *content = [OBContent alloc];
+    UIViewController *c = [[OnyxBeacon sharedInstance] viewControllerForContent:content];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: c.restorationIdentifier];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+}
+
+- (void)deleteContent:(CDVInvokedUrlCommand *)command {
+    OBContent *content = [OBContent alloc];
     [[OnyxBeacon sharedInstance] deleteContent:content];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"deleteContent Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
@@ -91,8 +208,8 @@
 }
 
 - (void)sendUserMetrics : (CDVInvokedUrlCommand *)command {
-    NSDictionary * user =[command.arguments objectAtIndex:0];
-    
+    NSMutableDictionary* user = [command.arguments objectAtIndex:0];
+
     [[OnyxBeacon sharedInstance] sendUserMetrics:user];
     
     CDVPluginResult* pluginResult = [CDVPluginResult
@@ -102,24 +219,51 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     
 }
+
+
+- (void)registerForPushNotificationWithDeviceToken : (CDVInvokedUrlCommand *)command {
+    NSData* token = [[command.arguments objectAtIndex:0] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString* provider = [command.arguments objectAtIndex:0];
+    
+    [[OnyxBeacon sharedInstance] registerForPushNotificationWithDeviceToken:token forProvider:provider handler:^(NSDictionary *d, NSError *e) {
+        
+    }];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"registerForPushNotificationWithDeviceToken Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+}
+
+
+
+
+
+- (void)sendPushNotificationProviderDeviceToken : (CDVInvokedUrlCommand *)command {
+    NSString* token = [command.arguments objectAtIndex:0] ;
+    
+    [[OnyxBeacon sharedInstance] sendPushNotificationProviderDeviceToken:token];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"sendPushNotificationProviderDeviceToken Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+}
+
+
 - (void)sendReport :(CDVInvokedUrlCommand *)command {
     
-    NSString* reporter = [command.arguments objectAtIndex:0];
+    NSData* data = [[command.arguments objectAtIndex:0] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString* reporter = [command.arguments objectAtIndex:1];
+    NSString* message = [command.arguments objectAtIndex:2];
     
-    DDLogVerbose(@"Sending log report: %@", reporter);
-    for (id<DDLogger>logger in [DDLog allLoggers]) {
-        if ([logger isKindOfClass:[DDFileLogger class]]) {
-            id <DDLogFileManager> lfm = ((DDFileLogger *)logger).logFileManager;
-            NSArray *infos = [lfm sortedLogFileInfos];
-            for (DDLogFileInfo *fi in infos) {
-                NSString *filePath = fi.filePath;
-                NSLog(@"LOG: Sending %@ size %llu", filePath, fi.fileSize);
-                [[OnyxBeacon sharedInstance] sendReport:[[NSData alloc] initWithContentsOfFile:filePath] reporter:reporter message:@"" handler:^(NSError *error) {
-                    NSLog(@"Sending log report: %@", error);
-                }];
-            }
-        }
-    }
+    [[OnyxBeacon sharedInstance] sendReport:data reporter:reporter message:message handler:^(NSError *error) {
+
+    }];
     
     
     CDVPluginResult* pluginResult = [CDVPluginResult
@@ -130,27 +274,36 @@
 }
 
 
-- (UIViewController *)viewControllerForTags:(CDVInvokedUrlCommand *)command
+- (void)viewControllerForTags:(CDVInvokedUrlCommand *)command
 {
-    return [[OnyxBeacon sharedInstance] viewControllerForTags];
+    UIViewController *c =  [[OnyxBeacon sharedInstance] viewControllerForTags];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: c.restorationIdentifier];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
     
 }
-
 
 - (void)requestWhenInUseAuthorization:(CDVInvokedUrlCommand *)command
 {
     return [[OnyxBeacon sharedInstance] requestWhenInUseAuthorization];
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"requestWhenInUseAuthorization Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     
 }
 
 
 
 - (void)onyxBeaconError:(NSError *)error {
-    DDLogVerbose(@"Error: %@", error);
     NSString* jsString = nil;
     jsString = [NSString stringWithFormat:@"%@(\"%@\");", @"window.cordova.plugins.Ble.onyxBeaconError", error];
     [self.commandDelegate evalJs:jsString];
-
+    
 }
 
 
@@ -165,23 +318,24 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+-(void) resetService:(CDVInvokedUrlCommand *)command {
+    
+    [[OnyxBeacon sharedInstance] resetService];
+    
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult
+                                     resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString: @"resetService Invoked"];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+}
+
 -(void) setLogger:(CDVInvokedUrlCommand *)command {
     
-    //NSString* message = [command.arguments objectAtIndex:0];
-
-    if (self.fileLogger == nil) {
-        [DDLog addLogger:[DDTTYLogger sharedInstance]];
-        self.fileLogger = [[DDFileLogger alloc] init];
-        self.fileLogger.rollingFrequency =  60 * 60 * 24;
-        self.fileLogger.logFileManager.maximumNumberOfLogFiles = 1;
-        self.fileLogger.maximumFileSize = 0.5 * 1024 * 1024;
-        [self.fileLogger setLogFormatter:[[DDLogFileFormatterDefault alloc] init]];
-        [DDLog addLogger:self.fileLogger];
-    }
     [[OnyxBeacon sharedInstance] setLogger:^(NSString *message) {
-        DDLogVerbose(@"OB: %@", message);
+        
     }];
-    
     
     
     CDVPluginResult* pluginResult = [CDVPluginResult
@@ -189,7 +343,7 @@
                                      messageAsString: @"setLogger Invoked"];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-
+    
 }
 
 -(void) startServiceWithClientID:(CDVInvokedUrlCommand *)command {
@@ -207,14 +361,14 @@
                                      messageAsString: @"startServiceWithClientID Invoked"];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-
+    
 }
 
 
 - (void)applicationDidEnterBackground:(CDVInvokedUrlCommand *)command
 {
     [[OnyxBeacon sharedInstance] didEnterBackground];
-
+    
     CDVPluginResult* pluginResult = [CDVPluginResult
                                      resultWithStatus:CDVCommandStatus_OK
                                      messageAsString: @"didEnterBackground Invoked"];
@@ -232,7 +386,7 @@
                                      messageAsString: @"didEnterBackground Invoked"];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-
+    
 }
 
 @end

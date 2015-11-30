@@ -6,16 +6,31 @@ var Ble = function () {
 };
 
 var Tag = function (id, name, status){
-
+    
     this.id = id || "";
     this.name = name || "";
     this.status = status || "";
 }
 
-var currentCallback=null;
+var OBContent = function (title,uuid,message,path,action,createTime,contentState,contentType){
+    
+    
+    this.title = title || "";
+    this.uuid = uuid || "";
+    this.message = message || "";
+    this.path = path || "";
+    this.action = action || "";
+    this.createTime = createTime || "";
+    this.contentState = contentState || "";
+    this.contentType = contentType || "";
+    
+    
+}
+
 
 
 /**
+ * @Platform iOS
  * startServiceWithClientID
  * @param SA_CLIENTID
  * @param SA_SECRET
@@ -28,15 +43,132 @@ Ble.startServiceWithClientID = function (clientid, clientsecret, success, fail) 
 };
 
 /**
+ * @Platform iOS
+ * resetService
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+
+Ble.resetService = function (success, fail) {
+    exec(success, fail, 'Ble', 'resetService', []);
+};
+
+
+/**
+ * @Platform iOS
+ * viewControllerForContent
+ * @param {OBContent} ob_content
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ * @return UIViewController
+ */
+Ble.viewControllerForContent = function (ob_content, success, fail) {
+    exec(success, fail, 'Ble', 'viewControllerForContent', [ob_content]);
+};
+
+/**
+ * @Platform iOS
+ * getTags
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ * @return array of tags
+ */
+Ble.getTags = function ( success, fail) {
+    exec(success, fail, 'Ble', 'getTags ', []);
+};
+
+
+/**
+ * @Platform iOS
+ * getSelectedTags
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ * @return array of selected tags
+ */
+Ble.getSelectedTags = function ( success, fail) {
+    exec(success, fail, 'Ble', 'getSelectedTags ', []);
+};
+
+/**
+ * @Platform iOS
+ * setTags
+ * @param {nsset} tags [[id,name],[id,name]]
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.setTags = function ( tags,success, fail) {
+    exec(success, fail, 'Ble', 'setTags ', tags);
+};
+
+/**
+ * @Platform iOS
+ * clearCoupons
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.clearCoupons = function ( success, fail) {
+    exec(success, fail, 'Ble', 'clearCoupons ', []);
+};
+
+
+
+/**
+ * @Platform iOS
+ * deleteContent
+ * @param {OBContent} ob_content
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.deleteContent = function (ob_content, success, fail) {
+    exec(success, fail, 'Ble', 'deleteContent', [ob_content]);
+};
+
+
+/**
+ * @Platform iOS
+ * contentOpened
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.contentOpened = function ( ob_content,success, fail) {
+    exec(success, fail, 'Ble', 'contentOpened ', [ob_content]);
+};
+
+/**
+ * @Platform iOS
+ * contentTapped
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.contentTapped = function ( ob_content,success, fail) {
+    exec(success, fail, 'Ble', 'contentTapped ', [ob_content]);
+};
+
+/**
+ * @Platform iOS
+ * showContentInfo
+ * @param {OBContent} ob_content
+ * @param {UIViewController} viewController
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.showContentInfo = function (ob_content, viewController, success, fail) {
+    exec(success, fail, 'Ble', 'showContentInfo ', [ob_content,viewController]);
+};
+
+/**
+ * @Platform iOS
  * getContent
  * @param {Function} successCallback
  * @param {Function} errorCallback
+ * @return Content Array
  */
 Ble.getContent = function (success, fail) {
     exec(success, fail, 'Ble', 'getContent', []);
 };
 
 /**
+ * @Platform iOS
  * version
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -46,7 +178,9 @@ Ble.version = function ( success, fail) {
 };
 
 /**
+ * @Platform iOS
  * sendUserMetrics
+ * @param {NSDictionary} user [{.....}]
  * @param {Function} successCallback
  * @param {Function} errorCallback
  */
@@ -54,19 +188,48 @@ Ble.sendUserMetrics = function (user, success, fail) {
     exec(success, fail, 'Ble', 'sendUserMetrics', [user]);
 };
 
+
 /**
- * sendLogReport
+ * @Platform iOS
+ * registerForPushNotificationWithDeviceToken
+ * @param {NSString} token
+ * @param {NSString} pushProvider
  * @param {Function} successCallback
  * @param {Function} errorCallback
  */
-Ble.sendReport = function ( reporter, success, fail) {
-    exec(success, fail, 'Ble', 'sendLogReport', [reporter]);
+Ble.registerForPushNotificationWithDeviceToken = function (token, pushProvider, success, fail) {
+    exec(success, fail, 'Ble', 'sendPushNotificationProviderDeviceToken', [token,pushProvider]);
 };
 
 /**
+ * @Platform iOS
+ * sendPushNotificationProviderDeviceToken
+ * @param {NSDictionary} providerDeviceToken
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
+ */
+Ble.sendPushNotificationProviderDeviceToken = function (token, success, fail) {
+    exec(success, fail, 'Ble', 'sendPushNotificationProviderDeviceToken', [token]);
+};
+
+/**
+ * @Platform iOS
+ * sendReport
+ * @param {NSString} data
+ * @param {NSString} reporter
+ * @param {NSString} message
+ * @param {Function} errorCallback
+ */
+Ble.sendReport = function ( data,reporter,message, success, fail) {
+    exec(success, fail, 'Ble', 'sendReport', [data,reporter,message]);
+};
+
+/**
+ * @Platform iOS
  * viewControllerForTags
  * @param {Function} successCallback
  * @param {Function} errorCallback
+ * @return UIViewController
  */
 Ble.viewControllerForTags = function ( success, fail) {
     exec(success, fail, 'Ble', 'viewControllerForTags', []);
@@ -74,6 +237,7 @@ Ble.viewControllerForTags = function ( success, fail) {
 
 
 /**
+ * @Platform iOS
  * requestAlwaysAuthorization
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -84,6 +248,7 @@ Ble.requestAlwaysAuthorization = function (success, fail) {
 
 
 /**
+ * @Platform iOS
  * applicationDidEnterBackground
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -93,6 +258,7 @@ Ble.applicationDidEnterBackground = function ( success, fail) {
 };
 
 /**
+ * @Platform iOS
  * applicationWillEnterForeground
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -102,6 +268,7 @@ Ble.applicationWillEnterForeground = function (success, fail) {
 };
 
 /**
+ * @Platform iOS
  * setLogger
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -111,6 +278,7 @@ Ble.setLogger = function ( success, fail) {
 };
 
 /**
+ * @Platform iOS
  * requestWhenInUseAuthorization
  * @param {Function} successCallback
  * @param {Function} errorCallback
@@ -354,7 +522,52 @@ Ble.markAsOpened = function (var1,success, fail) {
     exec(success, fail, 'Ble', 'markAsOpened', [var1]);
 };
 
+
+
 /**
+ * @Platform iOS
+ * didRangeBeacons
+ */
+
+Ble.didRangeBeacons = function (beaconArray,ob_region) {
+};
+
+/**
+ * @Platform iOS
+ * locationManagerDidEnterRegion
+ */
+Ble.locationManagerDidEnterRegion = function (cl_region) {
+};
+
+
+/**
+ * @Platform iOS
+ * locationManagerDidEnterRegion
+ */
+Ble.locationManagerDidExitRegion = function (cl_region) {
+};
+
+
+/**
+ * @Platform iOS
+ * didReceiveContent
+ */
+Ble.didReceiveContent = function (couponsArray) {
+    
+};
+
+
+
+/**
+ * @Platform iOS
+ * didRequestInfo
+ */
+Ble.didRequestInfo = function (ob_content,viewcontroller) {
+    
+};
+
+/**
+ * @Platform iOS
  * onyxBeaconError
  */
 Ble.onyxBeaconError = function (msg) {
@@ -368,6 +581,11 @@ if (cordova.platformId === 'android' || cordova.platformId === 'amazon-fireos' |
     channel.waitForInitialization('onBlePluginReady');
     
     channel.onCordovaReady.subscribe(function() {
+                                     exec(Ble.didRangeBeacons, undefined, 'Ble', 'messageChannel', []);
+                                     exec(Ble.locationManagerDidEnterRegion, undefined, 'Ble', 'messageChannel', []);
+                                     exec(Ble.locationManagerDidExitRegion, undefined, 'Ble', 'messageChannel', []);
+                                     exec(Ble.didReceiveContent, undefined, 'Ble', 'messageChannel', []);
+                                     exec(Ble.didRequestInfo, undefined, 'Ble', 'messageChannel', []);
                                      exec(Ble.onyxBeaconError, undefined, 'Ble', 'messageChannel', []);
                                      channel.initializationComplete('onBlePluginReady');
                                      });
