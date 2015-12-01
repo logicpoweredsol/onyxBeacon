@@ -2,17 +2,29 @@ package com.cordova.ble;
 
 
 import android.content.Context;
+import android.content.IntentFilter;
 
 import com.onyxbeacon.OnyxBeaconManager;
 import com.onyxbeacon.OnyxBeaconErrorListener;
 import com.onyxbeacon.rest.auth.util.AuthenticationMode;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.ExposedJsApi;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.onyxbeacon.OnyxBeaconApplication;
+import com.onyxbeacon.model.Tag;
+import com.onyxbeacon.model.web.BluemixApp;
+import com.onyxbeacon.rest.auth.util.AuthenticationMode;
+
+import java.util.ArrayList;
 
 
 public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleStateListener  {
@@ -34,19 +46,19 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
 
         super.initialize(cordova, webView);
 
-        beaconManager = OnyxBeaconApplication.getOnyxBeaconManager(this);
+        beaconManager = OnyxBeaconApplication.getOnyxBeaconManager(cordova.getActivity());
 
         mContentReceiver = ContentReceiver.getInstance(this);
         //Register for BLE events
         mBleReceiver = BleStateReceiver.getInstance();
         mBleReceiver.setBleStateListener(this);
 
-        BLE_INTENT_FILTER = getPackageName() + ".scan";
-        registerReceiver(mBleReceiver, new IntentFilter(BLE_INTENT_FILTER));
+        BLE_INTENT_FILTER = cordova.getActivity().getPackageName() + ".scan";
+        cordova.getActivity().registerReceiver(mBleReceiver, new IntentFilter(BLE_INTENT_FILTER));
         bleStateRegistered = true;
 
-        CONTENT_INTENT_FILTER = getPackageName() + ".content";
-        registerReceiver(mContentReceiver, new IntentFilter(CONTENT_INTENT_FILTER));
+        CONTENT_INTENT_FILTER = cordova.getActivity().getPackageName() + ".content";
+        cordova.getActivity().registerReceiver(mContentReceiver, new IntentFilter(CONTENT_INTENT_FILTER));
         receiverRegistered = true;
     }
     /**
@@ -218,7 +230,7 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
     public void onBluemixCredentialsReceived( String blueMix ) {
         String js = String.format(
                 "window.cordova.plugins.Ble.onBluemixCredentialsReceived('%s');",
-                tags);
+                blueMix);
         webView.sendJavascript(js);
     }
 
@@ -228,19 +240,19 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
         System.out.println(event);
         switch (event) {
             case 1:
-                onError(event,"Probably your bluetooth stack has crashed. Please restart your bluetooth”);
+                onError(event,new Exception("Probably your bluetooth stack has crashed. Please restart your bluetooth"));
                 break;
             case 2:
-                 onError(event, "Beacons with invalid RSSI detected. Please restart your bluetooth.”);
+                 onError(event, new Exception("Beacons with invalid RSSI detected. Please restart your bluetooth."));
              break;
 
-		default:onError(event, "This Error is unknown");
+		default:onError(event, new Exception("This Error is unknown"));
             break;
 
         }
     }
 
-
+/*
     public void onResume() {
         super.onResume();
 
@@ -273,6 +285,6 @@ public class Ble extends CordovaPlugin implements OnyxBeaconErrorListener,BleSta
             bleStateRegistered = false;
         }
 
-    }
+    }*/
 
 }

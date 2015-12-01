@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.onyxbeacon.OnyxBeaconApplication;
-import com.onyxbeacon.couponbeacondemo7.listener.BleStateListener;
 
 /**
  * Project : CouponDemo.
@@ -42,11 +41,10 @@ public class BleStateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String payloadType = intent.getStringExtra(OnyxBeaconApplication.SCAN_EVENT);
-        switch (payloadType) {
-            case OnyxBeaconApplication.EMPTY_SCANS:
-                break;
-            case OnyxBeaconApplication.INVALID_RSSI:
-                break;
+        if(payloadType == OnyxBeaconApplication.EMPTY_SCANS) {
+
+        }else if(payloadType == OnyxBeaconApplication.EMPTY_SCANS) {
+
         }
     }
 }

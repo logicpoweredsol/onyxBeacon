@@ -23,6 +23,7 @@ import com.onyxbeacon.model.Tag;
 import com.onyxbeacon.model.web.BluemixApp;
 import com.onyxbeacon.rest.model.Coupon;
 import com.onyxbeaconservice.IBeacon;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,13 +36,14 @@ public class ContentReceiver extends BroadcastReceiver {
 
 
     private static ContentReceiver sInstance;
-    Ble blePlugin;
+    static Ble blePlugin;
+    private Gson gson = new Gson();
 
     public ContentReceiver() {}
 
-    public static ContentReceiver getInstance(Ble blePlugin) {
-        if(this.blePlugin == null){
-            this.blePlugin = blePlugin;
+    public static ContentReceiver getInstance(Ble bp) {
+        if(blePlugin == null){
+            blePlugin = bp;
         }
         if (sInstance == null) {
             sInstance = new ContentReceiver();
@@ -54,35 +56,34 @@ public class ContentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String payloadType = intent.getStringExtra(OnyxBeaconApplication.PAYLOAD_TYPE);
 
-        switch (payloadType) {
-            case OnyxBeaconApplication.TAG_TYPE:
-                ArrayList<Tag> tagsList = intent.getParcelableArrayListExtra(OnyxBeaconApplication.EXTRA_TAGS);
-                blePlugin.onTagsReceived(gson.toJson(tagsList));
-                break;
-            case OnyxBeaconApplication.BEACON_TYPE:
+        if (payloadType == OnyxBeaconApplication.TAG_TYPE) {
+
+            ArrayList<Tag> tagsList = intent.getParcelableArrayListExtra(OnyxBeaconApplication.EXTRA_TAGS);
+            blePlugin.onTagsReceived(gson.toJson(tagsList));
+        }
+        else if (payloadType == OnyxBeaconApplication.BEACON_TYPE) {
                 ArrayList<IBeacon> beacons = intent.getParcelableArrayListExtra(OnyxBeaconApplication.EXTRA_BEACONS);
                 blePlugin.didRangeBeaconsInRegion(gson.toJson(beacons));
-            break;
-            case OnyxBeaconApplication.COUPON_TYPE:
+        }
+        else if (payloadType == OnyxBeaconApplication.COUPON_TYPE) {
 
-                ArrayList<Coupon> coupons = intent.getParcelableArrayListExtra(OnyxBeaconApplication.EXTRA_COUPONS);
-                IBeacon beacon = intent.getParcelableExtra(OnyxBeaconApplication.EXTRA_BEACON);
-                blePlugin.onCouponsReceived(gson.toJson(coupons),gson.toJson(beacon));
+            ArrayList<Coupon> coupons = intent.getParcelableArrayListExtra(OnyxBeaconApplication.EXTRA_COUPONS);
+            IBeacon beacon = intent.getParcelableExtra(OnyxBeaconApplication.EXTRA_BEACON);
+            blePlugin.onCouponsReceived(gson.toJson(coupons), gson.toJson(beacon));
 
-                break;
-            case OnyxBeaconApplication.PUSH_TYPE:
-                BluemixApp bluemixApp = intent.getParcelableExtra(OnyxBeaconApplication.EXTRA_BLUEMIX);
-                System.out.println("PUSH Received bluemix credentials " + gson.toJson(bluemixApp));
-                blePlugin.onBluemixCredentialsReceived(gson.toJson(bluemixApp));
+        }
+        else if (payloadType == OnyxBeaconApplication.PUSH_TYPE) {
+            BluemixApp bluemixApp = intent.getParcelableExtra(OnyxBeaconApplication.EXTRA_BLUEMIX);
+            System.out.println("PUSH Received bluemix credentials " + gson.toJson(bluemixApp));
+            blePlugin.onBluemixCredentialsReceived(gson.toJson(bluemixApp));
 
-                break;
-            case OnyxBeaconApplication.WEB_REQUEST_TYPE:
-                String extraInfo = intent.getStringExtra(OnyxBeaconApplication.EXTRA_INFO);
-                System.out.println("AUTH Web reguest info " + extraInfo);
-                if (extraInfo.equals(OnyxBeaconApplication.REQUEST_UNAUTHORIZED)) {
-                    // Pin based session expired
-                }
-                break;
+        }
+        else if (payloadType == OnyxBeaconApplication.WEB_REQUEST_TYPE) {
+            String extraInfo = intent.getStringExtra(OnyxBeaconApplication.EXTRA_INFO);
+            System.out.println("AUTH Web reguest info " + extraInfo);
+            if (extraInfo.equals(OnyxBeaconApplication.REQUEST_UNAUTHORIZED)) {
+                // Pin based session expired
+            }
         }
 
 
