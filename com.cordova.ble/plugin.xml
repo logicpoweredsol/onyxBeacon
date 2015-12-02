@@ -7,15 +7,15 @@
     <description>OnyxBeacon plugin</description>
     <license>Commercial</license>
 
-    <js-module src="www/ble.js" name="ble">
-        <clobbers target="cordova.plugins.ble"/>
+    <js-module src="www/ble.js" name="Ble">
+        <clobbers target="Ble"/>
     </js-module>
 
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Ble">
-                <param name="android-package" value="com.cordova.ble"/>
+                <param name="android-package" value="com.cordova.ble.Ble"/>
             </feature>
         </config-file>
 
