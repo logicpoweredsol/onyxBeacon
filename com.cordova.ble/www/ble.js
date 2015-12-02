@@ -499,7 +499,7 @@ Ble.setAuthExtraData = function (var1,success, fail) {
  * @param {Function} errorCallback
  */
 Ble.setTagsFilterForCoupons = function (tagArrayList,success, fail) {
-    exec(success, fail, 'Ble', 'setAuthExtraData', tagArrayList]);
+    exec(success, fail, 'Ble', 'setAuthExtraData', [tagArrayList]);
 };
 
 /**
